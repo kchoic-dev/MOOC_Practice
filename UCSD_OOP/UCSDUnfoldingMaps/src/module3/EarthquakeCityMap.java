@@ -51,6 +51,9 @@ public class EarthquakeCityMap extends PApplet {
 
 	
 	public void setup() {
+		System.setProperty("java.net.useSystemProxies","true");
+		System.setProperty("http.proxyHost", "70.10.15.10");
+		System.setProperty("http.proxyPort", "8080");			
 		size(950, 600, OPENGL);
 
 		if (offline) {
@@ -80,14 +83,25 @@ public class EarthquakeCityMap extends PApplet {
 	    	System.out.println(f.getProperties());
 	    	Object magObj = f.getProperty("magnitude");
 	    	float mag = Float.parseFloat(magObj.toString());
+	    	markers.add(createMarker(f));
 	    	// PointFeatures also have a getLocation method
 	    }
 	    
+	    for (PointFeature f:earthquakes){
+	    	markers.add(createMarker(f));
+	    }
+	    
+
+	    
+	    
 	    // Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
+
 	    
-	    //TODO: Add code here as appropriate
+
+
+	    
+	    map.addMarkers(markers);
 	}
 		
 	// A suggested helper method that takes in an earthquake feature and 
@@ -95,11 +109,30 @@ public class EarthquakeCityMap extends PApplet {
 	// TODO: Implement this method and call it from setUp, if it helps
 	private SimplePointMarker createMarker(PointFeature feature)
 	{
+		SimplePointMarker sm = new SimplePointMarker(feature.getLocation(),feature.getProperties());
+	    int red = color(255, 0, 0);
+	    int blue = color(0, 0, 255);
+	    int yellow = color(255, 255, 0);		
+    	float mag = Float.parseFloat(sm.getProperty("magnitude").toString());
+    	if (mag>=5.0) {
+	    	sm.setRadius(15);
+    		sm.setColor(red);	    		
+    	} else if (mag<5.0 && mag>=4.0){
+    		sm.setRadius(10);
+    		sm.setColor(yellow);	    		
+    	} else if (mag < 4.0){
+    		sm.setRadius(5);
+    		sm.setColor(blue);	    		
+    	}
+    	
 		// finish implementing and use this method, if it helps.
-		return new SimplePointMarker(feature.getLocation());
+		return sm;
 	}
 	
 	public void draw() {
+		System.setProperty("java.net.useSystemProxies","true");
+		System.setProperty("http.proxyHost", "70.10.15.10");
+		System.setProperty("http.proxyPort", "8080");		
 	    background(10);
 	    map.draw();
 	    addKey();
@@ -110,6 +143,19 @@ public class EarthquakeCityMap extends PApplet {
 	// TODO: Implement this method to draw the key
 	private void addKey() 
 	{	
+		fill(255,255,255);
+		rect(30, 50, 150, 300);
+		fill(0,0,0);
+		text("Earthquake Key", 	50, 70);
+		text("5.0+ Magnitude", 	80, 100);
+		text("4.0+ Magnitude", 	80, 130);
+		text("Below 4.0", 		80, 160);
+		fill(255,0,0);
+		ellipse(60,100,15,15);
+		fill(255,255,0);
+		ellipse(60,130,10,10);
+		fill(0,0,255);
+		ellipse(60,160,5,5);
 		// Remember you can use Processing's graphics methods here
 	
 	}
