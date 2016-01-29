@@ -60,7 +60,10 @@ public class EarthquakeCityMap extends PApplet {
 	// A List of country markers
 	private List<Marker> countryMarkers;
 	
-	public void setup() {		
+	public void setup() {
+		System.setProperty("java.net.useSystemProxies","true");
+		System.setProperty("http.proxyHost", "70.10.15.10");
+		System.setProperty("http.proxyPort", "8080");		
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -80,7 +83,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -166,6 +169,11 @@ public class EarthquakeCityMap extends PApplet {
 		
 		// TODO: Implement this method using the helper method isInCountry
 		
+		for (Marker m:countryMarkers){
+			if (isInCountry(earthquake,m)) return true;
+		}
+		
+		
 		// not inside any country
 		return false;
 	}
@@ -178,7 +186,46 @@ public class EarthquakeCityMap extends PApplet {
 	// And LandQuakeMarkers have a "country" property set.
 	private void printQuakes() 
 	{
+		/*
+		for (Marker m:quakeMarkers){
+			if (m instanceof LandQuakeMarker) {
+				System.out.println(m.getProperty("country"));
+				System.out.println(m.getProperty("title"));
+			}			
+		}
+		*/
+		
+		for (Marker cm:countryMarkers){
+			cm.getProperty("name");
+			cm.setProperty("count", 0);
+			for (Marker qm:quakeMarkers){
+				if (qm instanceof LandQuakeMarker) {
+					if(cm.getProperty("name").equals(qm.getProperty("country")))
+					{
+						int a = (int)cm.getProperty("count");
+						cm.setProperty("count", a+1);
+					}
+				}
+			}
+		}
+		
+		for (Marker cm:countryMarkers){
+			if ((int)cm.getProperty("count")>0)
+			{
+				System.out.println(cm.getProperty("name")+": "+cm.getProperty("count"));
+			}
+		}
+
+		int ocean = 0;
+		for (Marker qm:quakeMarkers){
+			if (qm instanceof OceanQuakeMarker) {
+				ocean++;
+			}
+		}
+		System.out.println("OCEAN:"+ ocean);
+		
 		// TODO: Implement this method
+
 	}
 	
 	

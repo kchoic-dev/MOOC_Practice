@@ -3,6 +3,8 @@ package module5;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.newt.event.MouseEvent;
+
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
@@ -62,7 +64,10 @@ public class EarthquakeCityMap extends PApplet {
 	private CommonMarker lastSelected;
 	private CommonMarker lastClicked;
 	
-	public void setup() {		
+	public void setup() {	
+		System.setProperty("java.net.useSystemProxies","true");
+		System.setProperty("http.proxyHost", "70.10.15.10");
+		System.setProperty("http.proxyPort", "8080");	
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -146,6 +151,23 @@ public class EarthquakeCityMap extends PApplet {
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
 		// TODO: Implement this method
+
+		
+		for (Marker m:markers)
+		{
+			if(m.isInside(map, mouseX, mouseY))
+			{
+				if(lastSelected==null && !m.isSelected()){
+					lastSelected=(CommonMarker)m;
+					m.setSelected(true);
+					//System.out.println(m.getProperty("name"));
+				}
+				
+			}
+		}
+
+		
+
 	}
 	
 	/** The event handler for mouse clicks
@@ -159,6 +181,40 @@ public class EarthquakeCityMap extends PApplet {
 		// TODO: Implement this method
 		// Hint: You probably want a helper method or two to keep this code
 		// from getting too long/disorganized
+
+
+		
+		for(Marker marker : quakeMarkers) {			
+			if (marker.isInside(map, mouseX, mouseY))
+			{
+				if (lastClicked!=null){
+					unhideMarkers();
+					lastClicked=null;
+				} else {
+					lastClicked = (CommonMarker) marker;
+					for(Marker m : quakeMarkers) {
+						if(m==lastClicked){
+							m.setHidden(false);
+						}else{
+							m.setHidden(true);
+						}
+						
+					}					
+				}
+				
+	
+			}		
+		}
+		
+	
+			
+		for(Marker marker : cityMarkers) {
+			marker.setHidden(false);
+		}
+		
+
+
+		System.out.println(mouseX+":"+mouseY);
 	}
 	
 	
