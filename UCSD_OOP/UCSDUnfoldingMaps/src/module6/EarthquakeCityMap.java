@@ -2,6 +2,8 @@ package module6;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -66,6 +68,9 @@ public class EarthquakeCityMap extends PApplet {
 	private CommonMarker lastClicked;
 	
 	public void setup() {		
+		System.setProperty("java.net.useSystemProxies","true");
+		System.setProperty("http.proxyHost", "70.10.15.10");
+		System.setProperty("http.proxyPort", "8080");			
 		// (1) Initializing canvas and map tiles
 		size(900, 700, OPENGL);
 		if (offline) {
@@ -124,6 +129,8 @@ public class EarthquakeCityMap extends PApplet {
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
 	    
+	    sortAndPrint(1);
+	    
 	    
 	}  // End setup
 	
@@ -137,13 +144,26 @@ public class EarthquakeCityMap extends PApplet {
 	
 	
 	// TODO: Add the method:
-	//   private void sortAndPrint(int numToPrint)
+	private void sortAndPrint(int numToPrint)
+	{
+		//Object[] result = this.quakeMarkers.toArray();
+		EarthquakeMarker[] e = quakeMarkers.toArray(new EarthquakeMarker[0]);
+		Arrays.sort(e);
+		
+		for (EarthquakeMarker m:e)
+		{
+			System.out.println(m.getMagnitude());
+		}		
+		
+		
+				
+	}
 	// and then call that method from setUp
 	
 	/** Event handler that gets called automatically when the 
 	 * mouse moves.
 	 */
-	@Override
+	@Override 
 	public void mouseMoved()
 	{
 		// clear the last selection
